@@ -11,7 +11,6 @@ HIFIGAN_16K_64 = {
     "num_gpus": 6,
     "batch_size": 16,
     "learning_rate": 0.0002,
-    "adam_b1": 0.8,
     "adam_b2": 0.99,
     "lr_decay": 0.999,
     "seed": 1234,
@@ -28,7 +27,6 @@ HIFIGAN_16K_64 = {
     "win_size": 1024,
     "sampling_rate": 16000,
     "fmin": 0,
-    "fmax": 8000,
     "fmax_for_loss": None,
     "num_workers": 4,
     "dist_config": {
@@ -65,7 +63,6 @@ def get_param_num(model):
 
 
 def get_vocoder(config, device):
-    config = hifigan.AttrDict(HIFIGAN_16K_64)
     vocoder = hifigan.Generator(config)
     vocoder.eval()
     vocoder.remove_weight_norm()
@@ -78,8 +75,6 @@ def vocoder_infer(mels, vocoder, lengths=None):
         wavs = vocoder(mels).squeeze(1)
 
     wavs = (wavs.cpu().numpy() * 32768).astype("int16")
-
-    if lengths is not None:
         wavs = wavs[:, :lengths]
 
     return wavs
